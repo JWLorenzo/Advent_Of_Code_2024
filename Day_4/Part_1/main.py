@@ -1,31 +1,15 @@
-with open("test.txt", "r") as f:
-    lines = f.readlines()
+import os
+import sys
 
 
-"""
-S | # | # | S | # | # | S 
-# | A | # | A | # | A | # 
-# | # | M | M | M | # | # 
-S | A | M | X | M | A | S 
-# | # | M | M | M | # | # 
-# | A | # | A | # | A | #   
-S | # | # | S | # | # | S 
-"""
-"""
-8 combinations to check
-
-N (0,0),(1,0),(2,0),(3,0)
-S (0,0),(-1,0),(-2,0),(-3,0)
-E (0,0),(1,0),(2,0),(3,0)
-W (0,0),(-1,0),(-2,0),(-3,0)
-NE (0,0),(1,1),(2,2),(3,3)
-SE (0,0),(1,-1),(2,-2),(3,-3)
-NW (0,0),(-1,1),(-2,2),(-3,3)
-SW (0,0),(-1,-1),(-2,-2),(-3,-3)
-"""
+def load_text_file(file_path: str) -> list:
+    with open(
+        os.path.join(os.path.abspath(os.path.dirname(sys.argv[0])), file_path), "r"
+    ) as f:
+        return f.readlines()
 
 
-def main() -> None:
+def calculate_score(lines):
     score = 0
     for y in range(len(lines)):
         for x in range(len(lines[y])):
@@ -95,7 +79,13 @@ def main() -> None:
                         and lines[y][x + 3] == "S"
                     ):
                         score += 1
-    print(score)
+    return score
+
+
+def main() -> None:
+    lines = load_text_file("test.txt")
+    score = calculate_score(lines)
+    print("Score", score)
 
 
 if __name__ == "__main__":

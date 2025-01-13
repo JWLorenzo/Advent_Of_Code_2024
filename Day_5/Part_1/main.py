@@ -1,12 +1,19 @@
-import pprint
-
-with open("test.txt", "r") as f:
-    raw_rules, raw_update = f.read().split("\n\n")
-    rules = [n.split("|") for n in raw_rules.split("\n")]
-    updates = [n.split(",") for n in raw_update.split("\n")]
+import os
+import sys
 
 
-def main() -> None:
+def load_text_file(file_path: str) -> tuple[list, list]:
+    with open(
+        os.path.join(os.path.abspath(os.path.dirname(sys.argv[0])), file_path), "r"
+    ) as f:
+        raw_rules, raw_update = f.read().split("\n\n")
+        rules = [n.split("|") for n in raw_rules.split("\n")]
+        updates = [n.split(",") for n in raw_update.split("\n")]
+
+        return rules, updates
+
+
+def process_rules_and_updates(rules, updates):
     sum = 0
     rules_dict = {}
     for rule in rules:
@@ -25,6 +32,12 @@ def main() -> None:
                             break
         if not broken_update:
             sum += int(update[len(update) // 2])
+    return sum
+
+
+def main() -> None:
+    rules, updates = load_text_file("test.txt")
+    sum = process_rules_and_updates(rules, updates)
     print("Sum", sum)
 
 

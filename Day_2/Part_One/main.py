@@ -1,8 +1,15 @@
-with open("test.txt", "r") as f:
-    lines = f.readlines()
+import os
+import sys
 
 
-def main() -> None:
+def load_text_file(file_path: str) -> list:
+    with open(
+        os.path.join(os.path.abspath(os.path.dirname(sys.argv[0])), file_path), "r"
+    ) as f:
+        return f.readlines()
+
+
+def check_reports(lines):
     safe = 0
     for report in lines:
         report = list(map(int, report.split()))
@@ -14,6 +21,13 @@ def main() -> None:
                         safe += 1
                 else:
                     break
+    return safe
+
+
+def main() -> None:
+    safe = 0
+    lines = load_text_file("test.txt")
+    safe = check_reports(lines)
     print("Safe", safe)
 
 

@@ -1,27 +1,28 @@
-with open("test.txt", "r") as f:
-    lines = f.read().splitlines()
-    for i in range(len(lines)):
-        if "^" in lines[i]:
-            y = i
-            for j in range(len(lines[i])):
-                if lines[i][j] == "^":
-                    x = j
+import os
+import sys
 
 
-def main() -> None:
-    direction = 0
-    """
-    0 = North
-    1 = East
-    2 = South
-    3 = West
-    """
+def load_text_file(file_path: str) -> tuple[int, int, list]:
+    with open(
+        os.path.join(os.path.abspath(os.path.dirname(sys.argv[0])), file_path), "r"
+    ) as f:
+        lines = f.read().splitlines()
+        for i in range(len(lines)):
+            if "^" in lines[i]:
+                y = i
+                for j in range(len(lines[i])):
+                    if lines[i][j] == "^":
+                        x = j
+    return x, y, lines
+
+
+def navigate_and_sum(lines, x, y, direction):
     directions_dict = {0: (0, -1), 1: (1, 0), 2: (0, 1), 3: (-1, 0)}
     arrow_dict = {0: "^", 1: ">", 2: "v", 3: "<"}
-    countinue_loop = True
+    continue_loop = True
     current_location = [x, y]
     sum = 1
-    while countinue_loop:
+    while continue_loop:
         y_next = current_location[1] + directions_dict[direction][1]
         x_next = current_location[0] + directions_dict[direction][0]
         if (
@@ -43,20 +44,21 @@ def main() -> None:
                     + "X"
                     + lines[current_location[1]][current_location[0] + 1 :]
                 )
-                current_location = [
-                    x_next,
-                    y_next,
-                ]
+                current_location = [x_next, y_next]
             else:
                 if direction == 3:
                     direction = 0
                 else:
                     direction += 1
         else:
-            countinue_loop = False
-            for line in lines:
-                print(line)
-            print("sum", sum)
+            continue_loop = False
+    return sum
+
+
+def main() -> None:
+    x, y, lines = load_text_file("test.txt")
+    sum = navigate_and_sum(lines, x, y, 0)
+    print("Sum", sum)
 
 
 if __name__ == "__main__":

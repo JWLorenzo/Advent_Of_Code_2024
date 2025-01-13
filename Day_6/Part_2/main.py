@@ -1,20 +1,22 @@
-with open("test.txt", "r") as f:
-    lines = f.read().splitlines()
-    for i in range(len(lines)):
-        if "^" in lines[i]:
-            y = i
-            for j in range(len(lines[i])):
-                if lines[i][j] == "^":
-                    x = j
+import os
+import sys
 
 
-def main() -> None:
-    """
-    0 = North
-    1 = East
-    2 = South
-    3 = West
-    """
+def load_text_file(file_path: str) -> tuple[int, int, list]:
+    with open(
+        os.path.join(os.path.abspath(os.path.dirname(sys.argv[0])), file_path), "r"
+    ) as f:
+        lines = f.read().splitlines()
+        for i in range(len(lines)):
+            if "^" in lines[i]:
+                y = i
+                for j in range(len(lines[i])):
+                    if lines[i][j] == "^":
+                        x = j
+    return x, y, lines
+
+
+def count_obstructions(lines, x, y):
     directions_dict = {0: (0, -1), 1: (1, 0), 2: (0, 1), 3: (-1, 0)}
     arrow_dict = {0: "^", 1: ">", 2: "v", 3: "<"}
     obstruction_count = 0
@@ -31,9 +33,9 @@ def main() -> None:
                     + obstruct_copy[y_loop][x_loop + 1 :]
                 )
                 direction = 0
-                countinue_loop = True
+                continue_loop = True
                 current_location = [x, y]
-                while countinue_loop:
+                while continue_loop:
                     y_next = current_location[1] + directions_dict[direction][1]
                     x_next = current_location[0] + directions_dict[direction][0]
                     if (
@@ -64,7 +66,7 @@ def main() -> None:
                         else:
                             if [x_next, y_next, direction] in loop_coords:
                                 obstruction_count += 1
-                                countinue_loop = False
+                                continue_loop = False
                                 print("obstruction count", obstruction_count)
 
                             loop_coords.append([x_next, y_next, direction])
@@ -74,8 +76,15 @@ def main() -> None:
                             else:
                                 direction += 1
                     else:
-                        countinue_loop = False
+                        continue_loop = False
     print("obstruction count", obstruction_count)
+    return obstruction_count
+
+
+def main() -> None:
+    x, y, lines = load_text_file("test.txt")
+    obstruction_count = count_obstructions(lines, x, y)
+    print("Obstruction Count", obstruction_count)
 
 
 if __name__ == "__main__":

@@ -1,8 +1,15 @@
-with open("test.txt", "r") as f:
-    lines = f.readlines()
+import os
+import sys
 
 
-def main() -> None:
+def load_text_file(file_path: str) -> list:
+    with open(
+        os.path.join(os.path.abspath(os.path.dirname(sys.argv[0])), file_path), "r"
+    ) as f:
+        return f.readlines()
+
+
+def check_safety(lines):
     safe = 0
     for report in lines:
         already_safe = False
@@ -37,7 +44,13 @@ def main() -> None:
                                     already_safe = True
                             else:
                                 break
+    return safe
 
+
+def main() -> None:
+    safe = 0
+    lines = load_text_file("test.txt")
+    safe = check_safety(lines)
     print("Safe", safe)
 
 

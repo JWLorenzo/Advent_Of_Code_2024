@@ -1,12 +1,19 @@
-import pprint
-
-with open("test.txt", "r") as f:
-    raw_rules, raw_update = f.read().split("\n\n")
-    rules = [n.split("|") for n in raw_rules.split("\n")]
-    updates = [n.split(",") for n in raw_update.split("\n")]
+import os
+import sys
 
 
-def main() -> None:
+def load_text_file(file_path: str) -> tuple[list, list]:
+    with open(
+        os.path.join(os.path.abspath(os.path.dirname(sys.argv[0])), file_path), "r"
+    ) as f:
+        raw_rules, raw_update = f.read().split("\n\n")
+        rules = [n.split("|") for n in raw_rules.split("\n")]
+        updates = [n.split(",") for n in raw_update.split("\n")]
+
+        return rules, updates
+
+
+def process_rules_and_updates(rules, updates):
     sum = 0
     fixed_sum = 0
     rules_dict = {}
@@ -17,7 +24,6 @@ def main() -> None:
         broken = False
         for update_index in range(len(update)):
             for update_index_value in rules_dict.get(update[update_index], []):
-
                 if update_index_value in update:
                     if update_index_value not in update[update_index:]:
                         broken = True
@@ -30,11 +36,16 @@ def main() -> None:
                         fixed_index += 1
                 fixed_list[fixed_index] = i
             fixed_sum += int(fixed_list[len(fixed_list) // 2])
-
         else:
             sum += int(update[len(update) // 2])
-    print("fixed_sum", fixed_sum)
-    print("sum", sum)
+    return sum, fixed_sum
+
+
+def main() -> None:
+    rules, updates = load_text_file("test.txt")
+    sum, fixed_sum = process_rules_and_updates(rules, updates)
+    print("Sum", sum)
+    print("Fixed Sum", fixed_sum)
 
 
 if __name__ == "__main__":

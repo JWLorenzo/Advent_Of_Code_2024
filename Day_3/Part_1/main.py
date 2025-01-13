@@ -1,11 +1,17 @@
-with open("test.txt", "r") as f:
-    lines = f.readlines()
+import os
+import sys
 
 
-def main() -> None:
+def load_text_file(file_path: str) -> list:
+    with open(
+        os.path.join(os.path.abspath(os.path.dirname(sys.argv[0])), file_path), "r"
+    ) as f:
+        return f.readlines()
+
+
+def process_lines(lines):
     sum_storage = 0
     for line in lines:
-        # print(line)
         for char in range(len(line)):
             if line[char : char + 4] == "mul(":
                 store_int = ["", ""]
@@ -14,10 +20,8 @@ def main() -> None:
                     if line[i] == "," and index_to_store == 0:
                         index_to_store += 1
                     elif line[i] == ")" and index_to_store == 1:
-                        print(store_int)
                         if store_int[0].isdigit() and store_int[1].isdigit():
                             sum_storage += int(store_int[0]) * int(store_int[1])
-                            print(store_int)
                             break
                         else:
                             break
@@ -28,7 +32,13 @@ def main() -> None:
                             store_int[index_to_store] += line[i]
                     else:
                         break
-    print(sum_storage)
+    return sum_storage
+
+
+def main() -> None:
+    lines = load_text_file("test.txt")
+    sum_storage = process_lines(lines)
+    print("Sum Storage", sum_storage)
 
 
 if __name__ == "__main__":
